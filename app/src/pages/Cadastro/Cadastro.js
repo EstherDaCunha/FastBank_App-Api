@@ -15,20 +15,23 @@ export default function Transf() {
 
     const reg = async () => {
         const teste = {
-            "nome": nome,
+            "name": nome,
             "dataNasc": dataNasc,
             "email": email,
-            "senha": password
+            "password": password
         }
         console.log(teste)
         
-        await fetch("https://2bc7-189-57-188-42.ngrok-free.app/api/usuarios/", {
+        await fetch("https://f58a-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(teste),
-        }).then((response) => response.json()).then(data => console.log(data)).catch(error => console.error(error))
+        })
+        .then((response) => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error.response))
 
         // await api
         //     .post("api/clientes/", {

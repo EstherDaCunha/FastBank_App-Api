@@ -3,26 +3,38 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-nativ
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
 import { api } from "../../services/api";
+import { useAuthStore } from "../../stores/authStore";
+import { useState } from "react";
+import axios from "axios";
 
 
 export default function SignIn() {
     const navigation = useNavigation();
 
-    const log = async () => {
-        const teste = {
+    const setAccessToken = useAuthStore(state => state.setAccessToken);
+    const setRefreshToken = useAuthStore(state => state.setRefreshToken);
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    async function log() {
+
+        await axios.post('https://f58a-189-57-188-42.ngrok-free.app/api/token/', {
             "email": email,
-            "senha": password
-        }
-        console.log(teste)
-        
-        await fetch("https://2bc7-189-57-188-42.ngrok-free.app/api/usuarios/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(teste),
-        }).then((response) => response.json()).then(data => console.log(data)).catch(error => console.error(error))
+            "password": password
+        })
+        .then((response) => {
+            const accessToken = response.data.access;
+            const refreshToken = response.data.refresh;
+            setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
+            navigation.navigate('Inicial')
+        })
+        .catch((e) => {
+            console.log(e.response);
+        })
     }
+
     return(
         <View style={styles.container}>
             <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
@@ -33,6 +45,7 @@ export default function SignIn() {
                 <TextInput 
                  placeholder="Digite seu email"
                  style={styles.input}
+                 onChangeText={(text) => setEmail(text)}
                 />
 
                 <Text style={styles.title}>Senha</Text>
@@ -40,13 +53,14 @@ export default function SignIn() {
                  placeholder="Digite sua senha"
                  secureTextEntry={true}
                  style={styles.input}
+                 onChangeText={(text) => setPassword(text)}
                 />
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => log()}>
                     <Text style={styles.buttonText}>Acessar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonRegister} onPress={() => log()}>
+                <TouchableOpacity style={styles.buttonRegister} onPress={() => navigation.navigate('Cadastro')}>
                     <Text style={styles.registerText}>Não tem uma conta? Cadastre-se</Text>
                 </TouchableOpacity>
             </Animatable.View>
