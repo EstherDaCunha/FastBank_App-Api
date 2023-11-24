@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
-
+import axios from "axios";
 
 export default function Inicial() {
     const navigation = useNavigation();
+
+    useEffect(() => {
+        axios.get('https://99c6-189-57-188-42.ngrok-free.app/api/token/',
+            {
+                headers: {
+                    Authorization: "Bearer " + yourJWTToken
+                }
+            }
+        ).then((response) => console.log(response)).catch((e) => {
+            console.log(e.response);
+        })
+    })
 
     return (
         <View style={styles.container}>
@@ -15,47 +27,47 @@ export default function Inicial() {
                 <Animatable.Image
                     animation="fadeInUp"
                     source={require('../../assets/cartao.png')}
-                    style={{ width: '100%', marginTop: 20}}
+                    style={{ width: '100%', marginTop: 20 }}
                     resizeMode="contain"
                 />
             </Animatable.View>
             <View style={styles.todosbtn}>
                 <TouchableOpacity style={styles.btnPix} onPress={() => navigation.navigate('Pix')}>
-                    <Image 
+                    <Image
                         source={require('../../assets/pix.png')}
-                        style={{width:50, height:50, flex:1}}
+                        style={{ width: 50, height: 50, flex: 1 }}
                         resizeMode="contain"
-                    /> 
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnPix} onPress={() => navigation.navigate('CodigoBarra')}>
-                    <Image 
+                    <Image
                         source={require('../../assets/codigo.png')}
-                        style={{width:40, height:40, flex:1, marginLeft:5}}
+                        style={{ width: 40, height: 40, flex: 1, marginLeft: 5 }}
                         resizeMode="contain"
-                    /> 
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnPix} onPress={() => navigation.navigate('Transf')}>
-                    <Image 
+                    <Image
                         source={require('../../assets/transf.jpg')}
-                        style={{width:50, height:50, flex:1, borderRadius:50}}
+                        style={{ width: 50, height: 50, flex: 1, borderRadius: 50 }}
                         resizeMode="contain"
-                     /> 
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnPix} onPress={() => navigation.navigate('Deposito')}>
-                    <Image 
-                         source={require('../../assets/dep.png')}
-                        style={{width:50, height:50, flex:1}}
+                    <Image
+                        source={require('../../assets/dep.png')}
+                        style={{ width: 50, height: 50, flex: 1 }}
                         resizeMode="contain"
-                    /> 
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnPix} onPress={() => navigation.navigate('Emprestimo')}>
-                    <Image 
+                    <Image
                         source={require('../../assets/emp.png')}
-                        style={{width:50, height:50, flex:1}}
+                        style={{ width: 50, height: 50, flex: 1 }}
                         resizeMode="contain"
-                    /> 
+                    />
                 </TouchableOpacity>
-                </View>
+            </View>
             <TouchableOpacity style={styles.prop}>
                 <Text style={styles.txtTitle}>Investimento</Text>
                 <Text style={styles.txtDesc}>Invista de maneira simples, rápida,  sem burocracias e 100% digital.</Text>
@@ -84,9 +96,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         width: 60,
         height: 60,
-        borderRadius:100,
-        margin:5,
-        padding:5
+        borderRadius: 100,
+        margin: 5,
+        padding: 5
     },
 
     todosbtn: {
@@ -98,11 +110,11 @@ const styles = StyleSheet.create({
 
     prop: {
         backgroundColor: '#5F2DA8',
-        width:'95%',
-        height:120,
-        margin:12,
-        borderRadius:20,
-        marginTop:25
+        width: '95%',
+        height: 120,
+        margin: 12,
+        borderRadius: 20,
+        marginTop: 25
     },
 
     txtTitle: {
@@ -110,7 +122,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         marginLeft: 10,
-        marginTop:15
+        marginTop: 15
     },
 
     txtDesc: {

@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-
+from rest_framework_simplejwt import authentication as authenticationJWT
 
 @api_view(['GET', 'POST'])
 def listar_clientes(request):
@@ -28,6 +28,7 @@ class ContaListCreate(ListCreateAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Conta.objects.all()
     serializer_class = SerializerConta
+    authentication_classes = [authenticationJWT.JWTAuthentication]
 
     def get_queryset(self):
         queryset = Conta.objects.all()
@@ -38,6 +39,7 @@ class ContaListCreate(ListCreateAPIView):
         return super().get_queryset()
 
 class ContaDetailView(RetrieveUpdateDestroyAPIView):    
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated)
     queryset = Conta.objects.all()
     serializer_class = SerializerConta
+    authentication_classes = [authenticationJWT.JWTAuthentication]
