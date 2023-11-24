@@ -26,3 +26,9 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+class Conta (models.Model): 
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE)
+    agencia = models.CharField(max_length=4)
+    conta = models.CharField(max_length=9)
+    saldo = models.DecimalField(max_digits=12, decimal_places=2)

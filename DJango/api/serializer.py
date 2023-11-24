@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Conta
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,3 +15,8 @@ class ClienteSerializer(serializers.ModelSerializer):
 
         user.save()
         return user
+
+class SerializerConta(serializers.ModelSerializer):
+    class Meta: 
+        model = Conta
+       	fields = ['id', 'cliente', 'agencia', 'conta', 'saldo']
