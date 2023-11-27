@@ -19,4 +19,10 @@ class ClienteSerializer(serializers.ModelSerializer):
 class SerializerConta(serializers.ModelSerializer):
     class Meta: 
         model = Conta
-       	fields = ['id', 'cliente', 'agencia', 'conta', 'saldo']
+        fields = ['id', 'cliente', 'agencia', 'conta', 'saldo']
+
+class DepositoSerializer(serializers.Serializer):
+    value = serializers.DecimalField(max_digits=5, decimal_places=2)
+    
+    class Meta:
+        fields = ['value']
