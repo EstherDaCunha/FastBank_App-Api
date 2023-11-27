@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Conta
+from api.models import User, Conta, Cartao, Transacao
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,3 +26,15 @@ class DepositoSerializer(serializers.Serializer):
     
     class Meta:
         fields = ['value']
+
+class SerializerCartao(serializers.ModelSerializer):
+    class Meta: 
+        model = Cartao
+        fields = '__all__'
+
+class TransacaoSerializer(serializers.ModelSerializer):
+    conta_destino = SerializerConta(many=False, read_only=True)
+    conta_origem = serializers.IntegerField()
+    class Meta:
+        model = Transacao
+        fields = '__all__' 

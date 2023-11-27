@@ -19,7 +19,7 @@ export default function SignIn() {
 
     async function log() {
 
-        await axios.post('https://d000-189-57-188-42.ngrok-free.app/api/token/', {
+        await axios.post('https://d9f8-189-57-188-42.ngrok-free.app/api/token/', {
             "email": email,
             "password": password
         })

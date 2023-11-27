@@ -22,7 +22,7 @@ export default function Transf() {
         }
         console.log(teste)
         
-        await fetch("https://f58a-189-57-188-42.ngrok-free.app/api/usuarios/", {
+        await fetch("https://d9f8-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

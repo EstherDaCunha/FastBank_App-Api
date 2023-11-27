@@ -8,7 +8,7 @@ export default function Inicial() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        axios.get('https://99c6-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://d9f8-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + yourJWTToken
@@ -16,13 +16,14 @@ export default function Inicial() {
             }
         ).then((response) => console.log(response)).catch((e) => {
             console.log(e.response);
+            console.log(yourJWTToken);
         })
     })
 
     return (
         <View style={styles.container}>
             <Animatable.View animation="fadeInUp" delay={500}>
-                <Text style={styles.txt}>Olá, Usuário</Text>
+                <Text style={styles.txt}>Olá, cliente</Text>
 
                 <Animatable.Image
                     animation="fadeInUp"
