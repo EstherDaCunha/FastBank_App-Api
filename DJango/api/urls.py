@@ -9,10 +9,10 @@ urlpatterns = [
     path('clientes/', views.listar_clientes),
     path('usuarios/', views.ClientesView.as_view()),
 
-    path('conta/', views.ContaListCreate.as_view()),
-    path('conta/<int:pk>', views.ContaDetailView.as_view()),
+    path('conta/', views.ContaViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('conta/<int:pk>/depositar', views.ContaViewSet.as_view({'post': 'depositar'})),
 
-    path('cartao/', views.CartaoViewSet.as_view({'get': 'list'})),
+    path('cartao/', views.CartaoViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('transacao/', views.TransacaoViewSet.as_view({'get': 'list'})),
 ]
 
