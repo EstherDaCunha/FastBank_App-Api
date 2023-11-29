@@ -59,4 +59,21 @@ class Transacao(models.Model):
     cartao = models.ForeignKey(Cartao, on_delete=models.DO_NOTHING, related_name="cartao", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Emprestimo(models.Model):
+    conta = models.ForeignKey(Conta, related_name="fk_conta", on_delete=models.PROTECT)
+    valor_emprest = models.DecimalField(decimal_places=2, max_digits=10)
+    parcelas = models.IntegerField()
+    valor_parcelas = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, default='Pendente')
+    dataVenc = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.dataVenc:
+            self.dataVenc = timezone.now() + timedelta(3650)
+        super(Emprestimo, self).save(*args, **kwargs)
+        
+    def __str__(self):
+        return f'Empréstimo de {self.valor_emprest} para {self.conta}'
+
 

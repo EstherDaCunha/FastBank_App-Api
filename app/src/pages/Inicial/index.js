@@ -8,10 +8,10 @@ export default function Inicial() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        axios.get('https://d9f8-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://3139-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
-                    Authorization: "Bearer " + yourJWTToken
+                    Authorization: "Bearer " + "https://3139-189-57-188-42.ngrok-free.app"
                 }
             }
         ).then((response) => console.log(response)).catch((e) => {

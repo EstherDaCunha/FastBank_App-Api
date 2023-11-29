@@ -3,8 +3,6 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "reac
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import { api } from "../../services/api";
-import axios from 'axios';
 
 export default function Transf() {
     const navigation = useNavigation();
@@ -22,7 +20,7 @@ export default function Transf() {
         }
         console.log(teste)
         
-        await fetch("https://d9f8-189-57-188-42.ngrok-free.app/api/usuarios/", {
+        await fetch("https://3139-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -32,38 +30,16 @@ export default function Transf() {
         .then((response) => response.json())
         .then(data => console.log(data))
         .catch(error => console.error(error.response))
-
-        // await api
-        //     .post("api/clientes/", {
-        //         nome: nome,
-        //         dataNasc: dataNasc,
-        //         email: email,
-        //         senha: password
-        //     })
-        //     .then((response) => {
-        //         console.log(response)
-        //     })
-        //     .catch((error) => {
-        //         if (axios.isAxiosError(error)) {
-        //             console.log("Axios request failed", error.response?.data, error.toJSON());
-        //         } else {
-        //             console.log(error);
-        //         }
-
-        //         // throw new Error("Request failed");
-        //     });
-
-        // navigation.navigate('SignIn')
     }
 
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.container}>
-
+                
                 <Animatable.Image
                     animation="flipInY"
-                    source={require('../../assets/logo.png')}
+                    source={require('../../assets/camera.png')}
                     style={{ width: '100%', top: '20%' }}
                     resizeMode="contain"
                 />

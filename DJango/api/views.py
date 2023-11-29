@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import action
 from rest_framework_simplejwt import authentication as authenticationJWT
-from api.models import Conta, Cartao, Transacao
+from api.models import Conta, Cartao, Transacao, Emprestimo
 from rest_framework import (viewsets, status)
 from api import serializer
 from django.db.models import Q
@@ -124,7 +124,7 @@ class TransacaoViewSet(viewsets.ViewSet):
 
             if conta:
                 transacoes_conta = Transacao.objects.filter(Q(conta_origem=conta) | Q(conta_destino=conta))
-                serializer = serializer.TransacaoSerializer(transacoes_conta, many=True)
+                serializer = serializers.TransacaoSerializer(transacoes_conta, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Conta não encontrada para o usuário logado"}, status=status.HTTP_404_NOT_FOUND)
@@ -133,7 +133,7 @@ class TransacaoViewSet(viewsets.ViewSet):
         
     @action(detail=False, methods=['post'])
     def transferencia(self, request):
-        serializer = serializer.TransacaoSerializer(data=request.data)
+        serializer = serializers.TransacaoSerializer(data=request.data)
         auth_user = request.user
 
         if serializer.is_valid():
@@ -169,3 +169,50 @@ class TransacaoViewSet(viewsets.ViewSet):
                 return Response({"message": "Conta de origem ou destino não encontrada"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EmprestimoViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = [authenticationJWT.JWTAuthentication]
+    queryset = Emprestimo.objects.all()
+    serializer_class = serializer.EmprestimoSerializer
+
+    @action(detail=False, methods=['GET'])
+    def listar_emprestimos(self, request):
+        conta = Conta.objects.filter(user=request.user).first()
+        emprestimo = Emprestimo.objects.filter(conta=conta)
+        serializer = self.get_serializer(emprestimo, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['POST'])
+    def solicitar_emprestimo(self, request):
+        conta_id = request.data.get('conta')
+        valor_emprestimo = decimal.Decimal(request.data.get('valor_emprest'))
+        print(valor_emprestimo)
+        if conta_id and valor_emprestimo:
+            conta = Conta.objects.filter(id=conta_id).first()
+
+            if conta:
+                emprestimo_status = 'Negado'
+
+                if conta.saldo >= (5 * valor_emprestimo):
+                    emprestimo_status = 'Aprovado'
+                    # Transferir o valor do empréstimo para a conta
+                    conta.saldo += valor_emprestimo
+                    conta.save()
+
+                emprestimo = Emprestimo.objects.create(
+                    conta=conta,
+                    valor_emprest=valor_emprestimo,
+                    parcelas=request.data.get('parcelas', 18),
+                    valor_parcelas=valor_emprestimo / 18,
+                    status=emprestimo_status
+                )
+
+                if emprestimo_status == 'Aprovado':
+                    return Response({"message": f"Solicitação de empréstimo {emprestimo_status.lower()} realizada com sucesso"}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({"message": "Solicitação de empréstimo negada"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "Conta não encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"message": "O 'conta_id' e 'valor_emprestimo' são obrigatórios"}, status=status.HTTP_400_BAD_REQUEST)

@@ -14,5 +14,6 @@ urlpatterns = [
 
     path('cartao/', views.CartaoViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('transacao/', views.TransacaoViewSet.as_view({'get': 'list'})),
+    path('emprestimo/', views.EmprestimoViewSet.as_view({'get': 'list'})),
 ]
 
