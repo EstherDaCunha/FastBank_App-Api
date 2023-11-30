@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 import random
 from datetime import date, timedelta
+from django.utils import timezone
 import uuid
 import os
 
@@ -56,7 +57,6 @@ class Transacao(models.Model):
     conta_origem = models.ForeignKey(Conta, on_delete=models.DO_NOTHING, related_name="conta_origem", null=True)
     valor = models.DecimalField(max_digits=20, decimal_places=2)
     descricao = models.CharField(max_length=150, null=True)
-    cartao = models.ForeignKey(Cartao, on_delete=models.DO_NOTHING, related_name="cartao", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Emprestimo(models.Model):

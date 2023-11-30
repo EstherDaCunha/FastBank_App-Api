@@ -4,7 +4,7 @@ from api.models import User, Conta, Cartao, Transacao, Emprestimo
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'dataNasc', 'email', 'password']
+        fields = ['id', 'name', 'dataNasc', 'email', 'password','url_imagem']
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -38,8 +38,8 @@ class SerializerCartao(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransacaoSerializer(serializers.ModelSerializer):
-    conta_destino = SerializerConta(many=False, read_only=True)
-    conta_origem = serializers.IntegerField()
+    conta_origem = SerializerConta(many=False, read_only=True)
+    conta_destino = serializers.IntegerField()
     class Meta:
         model = Transacao
         fields = '__all__' 

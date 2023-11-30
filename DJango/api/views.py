@@ -12,6 +12,7 @@ from rest_framework import (viewsets, status)
 from api import serializer
 from django.db.models import Q
 import decimal, random
+from rest_framework.generics import mixins
 
 @api_view(['GET', 'POST'])
 def listar_clientes(request):
@@ -21,30 +22,30 @@ def listar_clientes(request):
         return Response(serializer.data)
     
 
-
 class ClientesView(ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = ClienteSerializer
-
-
 
 class ClentesDetailView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = ClienteSerializer
 
+
 class ContaViewSet(viewsets.ModelViewSet):    
     permission_classes = (IsAuthenticated,)
-    queryset = Conta.objects.all()
     serializer_class = SerializerConta
     authentication_classes = [authenticationJWT.JWTAuthentication]
 
+    def get_queryset(self):
+        user = self.request.user
+        contas = Conta.objects.filter(cliente=user)
+        return contas
     
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return serializer.ContaDetailSerializer
         
         return serializer.SerializerConta
-    
     def create(self, request, *args, **kwargs):
         serializer = SerializerConta(data=request.data)
         if serializer.is_valid():
@@ -77,36 +78,27 @@ class ContaViewSet(viewsets.ModelViewSet):
         return Response({"message": "Conta não encontrada ou dados inválidos"}, status=status.HTTP_400_BAD_REQUEST)
 
     
-class CartaoViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
-    authentication_classes = [authenticationJWT.JWTAuthentication]
+class CartaoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Cartao.objects.all()
     serializer_class = serializer.SerializerCartao
-
+    authentication_classes = [authenticationJWT.JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get_queryset(self):
+        """Pegar contas para usuários autenticados"""
         queryset = self.queryset
-        cliente = self.request.cliente if hasattr(self.request, 'cliente') else None
+        return queryset.filter(conta=(Conta.objects.all().filter(user=self.request.user).order_by("created_at").first())).order_by("created_at").distinct()
+    
 
-        if cliente:
-            return queryset.filter(conta__cliente=cliente).order_by("created_at").distinct()
-        else:
-            return Cartao.objects.none()
+    @action(detail=False, methods=["POST"], url_path='solicitar')
+    def solicitar_cartao(self, request):
+        auth_user = request.user
 
-    def create(self, request, *args, **kwargs):
-        cliente = getattr(request, 'cliente', None)
+        if auth_user:
+            conta = Conta.objects.filter(cliente=auth_user).first()
 
-        if not cliente:
-            return Response({"message": "Usuário não tem uma conta associada."}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = serializer.SerializerCartao(data=request.data)
-        
-        if serializer.is_valid():
-            serializer.validated_data["conta"] = cliente.conta
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if conta:
+                cartao_solicitado = Cartao.objects.filter
 
         
 class TransacaoViewSet(viewsets.ViewSet):
@@ -124,7 +116,7 @@ class TransacaoViewSet(viewsets.ViewSet):
 
             if conta:
                 transacoes_conta = Transacao.objects.filter(Q(conta_origem=conta) | Q(conta_destino=conta))
-                serializer = serializers.TransacaoSerializer(transacoes_conta, many=True)
+                serializer = serializer.TransacaoSerializer(transacoes_conta, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Conta não encontrada para o usuário logado"}, status=status.HTTP_404_NOT_FOUND)
@@ -133,16 +125,16 @@ class TransacaoViewSet(viewsets.ViewSet):
         
     @action(detail=False, methods=['post'])
     def transferencia(self, request):
-        serializer = serializers.TransacaoSerializer(data=request.data)
+        serializers = serializer.TransacaoSerializer(data=request.data)
         auth_user = request.user
 
-        if serializer.is_valid():
-            conta_destino_id = serializer.validated_data.get('conta_origem')
-            valor = serializer.validated_data.get('valor')
-            descricao = serializer.validated_data.get('descricao')
-            cartao = serializer.validated_data.get('cartao')
+        if serializers.is_valid():
+            print('cheguei')
+            conta_destino_id = serializers.validated_data.get('conta_destino')
+            valor = serializers.validated_data.get('valor')
+            descricao = serializers.validated_data.get('descricao')
 
-            conta_origem = Conta.objects.filter(user=auth_user).first()
+            conta_origem = Conta.objects.filter(cliente=auth_user).first()
             print("Conta origem: ", conta_origem)
             conta_destino = Conta.objects.filter(id=conta_destino_id).first()
             print("Conta destino: ", conta_destino)
@@ -152,8 +144,7 @@ class TransacaoViewSet(viewsets.ViewSet):
                         conta_destino=conta_destino,
                         conta_origem=conta_origem,
                         valor=valor,
-                        descricao=descricao,
-                        cartao_id=cartao.id 
+                        descricao=descricao
                     )
 
                     conta_origem.saldo -= valor
@@ -168,7 +159,7 @@ class TransacaoViewSet(viewsets.ViewSet):
             else:
                 return Response({"message": "Conta de origem ou destino não encontrada"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmprestimoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
@@ -194,6 +185,7 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
             if conta:
                 emprestimo_status = 'Negado'
 
+
                 if conta.saldo >= (5 * valor_emprestimo):
                     emprestimo_status = 'Aprovado'
                     # Transferir o valor do empréstimo para a conta
@@ -203,8 +195,8 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
                 emprestimo = Emprestimo.objects.create(
                     conta=conta,
                     valor_emprest=valor_emprestimo,
-                    parcelas=request.data.get('parcelas', 18),
-                    valor_parcelas=valor_emprestimo / 18,
+                    parcelas = 0 if emprestimo_status == 'Negado' else request.data.get('parcelas', 18),
+                    valor_parcelas= 0 if emprestimo_status == "Negado" else valor_emprestimo / 18,
                     status=emprestimo_status
                 )
 

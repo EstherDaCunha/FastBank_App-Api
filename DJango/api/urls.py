@@ -13,7 +13,7 @@ urlpatterns = [
     path('conta/<int:pk>/depositar', views.ContaViewSet.as_view({'post': 'depositar'})),
 
     path('cartao/', views.CartaoViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('transacao/', views.TransacaoViewSet.as_view({'get': 'list'})),
-    path('emprestimo/', views.EmprestimoViewSet.as_view({'get': 'list'})),
+    path('transacao/', views.TransacaoViewSet.as_view({'post': 'transferencia'})),
+    path('emprestimo/', views.EmprestimoViewSet.as_view({'post': 'solicitar_emprestimo', 'get':'list'})),
 ]
 
