@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.decorators import action
 from rest_framework_simplejwt import authentication as authenticationJWT
 from api.models import Conta, Cartao, Transacao, Emprestimo
@@ -13,6 +13,11 @@ from api import serializer
 from django.db.models import Q
 import decimal, random
 from rest_framework.generics import mixins
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework_simplejwt import authentication as authenticationJWT
+
 
 @api_view(['GET', 'POST'])
 def listar_clientes(request):
@@ -20,16 +25,15 @@ def listar_clientes(request):
         queryset = User.objects.all()
         serializer = ClienteSerializer(queryset, many=True)
         return Response(serializer.data)
-    
 
 class ClientesView(ListCreateAPIView):
     queryset = User.objects.all()
-    serializer_class = ClienteSerializer
+    serializer_class = ClienteSerializer 
+  
 
 class ClentesDetailView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = ClienteSerializer
-
 
 class ContaViewSet(viewsets.ModelViewSet):    
     permission_classes = (IsAuthenticated,)
@@ -123,6 +127,7 @@ class TransacaoViewSet(viewsets.ViewSet):
         else:
             return Response({"message": "Usuário não autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
         
+        
     @action(detail=False, methods=['post'])
     def transferencia(self, request):
         serializers = serializer.TransacaoSerializer(data=request.data)
@@ -160,6 +165,38 @@ class TransacaoViewSet(viewsets.ViewSet):
                 return Response({"message": "Conta de origem ou destino não encontrada"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['GET'])
+    def criar_extrato(self, request):
+        auth_user = request.user
+
+        if auth_user:
+            conta = Conta.objects.filter(cliente=auth_user).first()
+
+            if conta:
+                transacoes_conta = Transacao.objects.filter(Q(conta_origem=conta) | Q(conta_destino=conta)).order_by('valor')
+                extrato = []
+
+                saldo_atual = conta.saldo
+
+                for transacao in transacoes_conta:
+                    extrato.append({
+                        'created_at': transacao.created_at,
+                        'valor': transacao.valor,
+                        'descricao': transacao.descricao,
+                        'saldo_atual': saldo_atual
+                    })
+
+                    if transacao.conta_origem.id == conta.id:
+                        saldo_atual -= transacao.valor
+                    elif transacao.conta_destino.id == conta.id:
+                        saldo_atual += transacao.valor
+
+                return Response(extrato, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "Conta não encontrada para o usuário logado"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"message": "Usuário não autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class EmprestimoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )

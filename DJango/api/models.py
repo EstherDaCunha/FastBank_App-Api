@@ -6,12 +6,15 @@ from datetime import date, timedelta
 from django.utils import timezone
 import uuid
 import os
+from datetime import datetime
+
 
 def user_image_field(instance, filename):
     ext = os.path.splitext(filename)[1]
     filename = f'{uuid.uuid4()}{ext}'
     
     return os.path.join('uploads', 'user', filename)
+
 
 class User(AbstractUser):
     name = models.CharField(max_length=255)
