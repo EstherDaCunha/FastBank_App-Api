@@ -22,6 +22,8 @@ class User(AbstractUser):
     dataNasc = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     url_imagem = models.ImageField(null=True, upload_to=user_image_field)
+    last_try_login = models.DateTimeField(default=datetime.now)
+    count_try_login = models.IntegerField(default=0)
 
     username = None
     first_name = None

@@ -17,6 +17,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt import authentication as authenticationJWT
+from rest_framework_simplejwt.views import TokenObtainPairView
+from datetime import datetime, timedelta
+from rest_framework_simplejwt import authentication as authenticationJWT
+from rest_framework_simplejwt.tokens import AccessToken 
+from django.contrib.auth import authenticate
+
+
 
 
 @api_view(['GET', 'POST'])
@@ -245,3 +252,64 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
                 return Response({"message": "Conta não encontrada"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({"message": "O 'conta_id' e 'valor_emprestimo' são obrigatórios"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not email or not password:
+            return Response(
+                {"error": "Email ou senha incorretos"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user = User.objects.filter(email=email).first()
+
+        formato_data = '%Y-%m-%d %H:%M:%S'
+        converter = datetime.strftime(datetime.now(), formato_data)
+
+        if user is None:
+            return Response(
+                {"detail": "Conta não encontrada"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        ultima_tentativa = datetime.strftime(
+            user.last_try_login, formato_data)
+        diferenca = (datetime.strptime(converter, formato_data) -
+                      datetime.strptime(ultima_tentativa, formato_data))
+        
+        if user.count_try_login == 2:
+            if timedelta(minutes=1) - diferenca <= timedelta(seconds=0):
+                user.count_try_login = 0
+                user.save()
+            else:
+                    return Response(
+                        {"detail": f"Tente novamente {timedelta(minutes=1) - diferenca} minutos depois"},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+            
+        autenticar = authenticate(request, username=email, password=password)
+
+        if autenticar is None:
+            if diferenca < timedelta(minutes=1) and user.count_try_login < 2:
+                user.count_try_login += 1
+            else:
+                user.count_try_login = 0
+
+            user.last_try_login = datetime.now()
+
+            user.save()
+            return Response(
+                {"detail": "Conta não encontrada"}
+            )
+        user.save()
+
+        access = AccessToken.for_user(user)
+        token_data = {
+            "access": str(access),
+        }
+        return Response(token_data, status=status.HTTP_200_OK)
+
+        
