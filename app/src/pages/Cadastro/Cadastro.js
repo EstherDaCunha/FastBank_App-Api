@@ -20,7 +20,7 @@ export default function Transf() {
         }
         console.log(teste)
         
-        await fetch("https://3139-189-57-188-42.ngrok-free.app/api/usuarios/", {
+        await fetch("https://71c2-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -32,6 +32,25 @@ export default function Transf() {
         .catch(error => console.error(error.response))
     }
 
+    const camera = async () => {
+        try {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!result.canceled) {
+                getBlobFroUri(result.assets[0].uri)
+                setImage(result.assets[0].uri)
+                const path = result.assets[0].uri
+                setImagem(path.substring(path.lastIndexOf('/') + 1, path.length))
+            }
+        } catch (E) {
+            console.log(E);
+        }
+    };
+
 
     return (
         <ScrollView style={styles.container}>
@@ -40,8 +59,9 @@ export default function Transf() {
                 <Animatable.Image
                     animation="flipInY"
                     source={require('../../assets/camera.png')}
-                    style={{ width: '100%', top: '20%' }}
+                    style={{ width: '60%', marginLeft:'20%' }}
                     resizeMode="contain"
+                    onPress={camera}
                 />
 
                 <Text style={styles.title}>Nome Completo</Text>
@@ -103,7 +123,7 @@ const styles = StyleSheet.create({
         height: 50,
         marginLeft: 40,
         borderRadius: 20,
-        marginTop: 170,
+        marginTop: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -117,10 +137,8 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 20,
-        marginTop: 28,
         color: 'white',
         marginLeft: 85,
-        top: '20%'
     },
     input: {
         borderBottomWidth: 1,
@@ -131,6 +149,5 @@ const styles = StyleSheet.create({
         width: '60%',
         marginLeft: 85,
         borderRadius: 10,
-        top: '20%'
     },
 })
