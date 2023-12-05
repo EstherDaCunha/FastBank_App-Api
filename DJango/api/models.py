@@ -63,6 +63,7 @@ class Transacao(models.Model):
     valor = models.DecimalField(max_digits=20, decimal_places=2)
     descricao = models.CharField(max_length=150, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    cartao = models.ForeignKey(Cartao, on_delete=models.DO_NOTHING, related_name="cartao", null=True)
 
 class Emprestimo(models.Model):
     conta = models.ForeignKey(Conta, related_name="fk_conta", on_delete=models.PROTECT)

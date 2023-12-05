@@ -42,8 +42,9 @@ class SerializerCartao(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransacaoSerializer(serializers.ModelSerializer):
-    conta_origem = SerializerConta(many=False, read_only=True)
     conta_destino = serializers.IntegerField()
+    conta_origem = serializers.IntegerField()
+    cartao = serializers.IntegerField() 
     class Meta:
         model = Transacao
         fields = '__all__' 

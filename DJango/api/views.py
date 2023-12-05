@@ -137,41 +137,53 @@ class TransacaoViewSet(viewsets.ViewSet):
         
     @action(detail=False, methods=['post'])
     def transferencia(self, request):
-        serializers = serializer.TransacaoSerializer(data=request.data)
+        serializer_ = serializer.TransacaoSerializer(data=request.data)
         auth_user = request.user
 
-        if serializers.is_valid():
-            print('cheguei')
-            conta_destino_id = serializers.validated_data.get('conta_destino')
-            valor = serializers.validated_data.get('valor')
-            descricao = serializers.validated_data.get('descricao')
+        if serializer_.is_valid():
+            conta_destino_id = serializer_.validated_data.get('conta_destino')
+            valor = serializer_.validated_data.get('valor')
+            descricao = serializer_.validated_data.get('descricao')
+            cartao_id = serializer_.validated_data.get('cartao')
 
             conta_origem = Conta.objects.filter(cliente=auth_user).first()
-            print("Conta origem: ", conta_origem)
-            conta_destino = Conta.objects.filter(id=conta_destino_id).first()
-            print("Conta destino: ", conta_destino)
-            if conta_origem and conta_destino:
-                if conta_origem.saldo >= valor:
-                    transacao = Transacao.objects.create(
-                        conta_destino=conta_destino,
-                        conta_origem=conta_origem,
-                        valor=valor,
-                        descricao=descricao
-                    )
 
-                    conta_origem.saldo -= valor
-                    conta_destino.saldo += valor
+            if not conta_origem:
+                return Response({"message": "Conta de origem não encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-                    conta_origem.save()
-                    conta_destino.save()
+            try:
+                conta_destino = Conta.objects.get(id=conta_destino_id)
+            except Conta.DoesNotExist:
+                print(f"Conta de destino não encontrada. ID: {conta_destino_id}")
+                return Response({"message": "Conta de destino não encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-                    return Response({"message": "Transação realizada com sucesso"}, status=status.HTTP_201_CREATED)
-                else:
-                    return Response({"message": "Saldo insuficiente na conta de origem"}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                cartao = Cartao.objects.get(id=cartao_id)
+            except Cartao.DoesNotExist:
+                print(f"Cartão não encontrado. ID: {cartao_id}")
+                return Response({"message": "Cartão não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+            if conta_origem.saldo >= valor:
+                transacao = Transacao.objects.create(
+                    conta_destino=conta_destino,
+                    conta_origem=conta_origem,
+                    valor=valor,
+                    descricao=descricao,
+                    cartao=cartao  # Agora estamos passando o objeto Cartao
+                )
+
+                conta_origem.saldo -= valor
+                conta_destino.saldo += valor
+
+                conta_origem.save()
+                conta_destino.save()
+
+                return Response({"message": "Transação realizada com sucesso"}, status=status.HTTP_201_CREATED)
             else:
-                return Response({"message": "Conta de origem ou destino não encontrada"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "Saldo insuficiente na conta de origem"}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+            print("Erros do serializer:", serializer_.errors)
+            return Response(serializer_.errors, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=False, methods=['GET'])
     def criar_extrato(self, request):
