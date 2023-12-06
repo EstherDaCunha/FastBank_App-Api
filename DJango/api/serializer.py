@@ -31,7 +31,7 @@ class ContaDetailSerializer(SerializerConta):
         fields = SerializerConta.Meta.fields + ['id', 'saldo']
 
 class DepositoSerializer(serializers.Serializer):
-    value = serializers.DecimalField(max_digits=5, decimal_places=2)
+    value = serializers.DecimalField(max_digits=15, decimal_places=2)
     
     class Meta:
         fields = ['value']

@@ -17,7 +17,7 @@ export default function Confirmacao() {
             </View>
 
             <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>
-                <Text style={styles.title}>Seu cheque foi enviado para analise</Text>
+                <Text style={styles.title}>Valor depositado com sucessp</Text>
 
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Inicial')}>
                     <Text style={styles.buttonText}>Finalizar</Text>

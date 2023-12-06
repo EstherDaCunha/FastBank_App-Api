@@ -73,20 +73,22 @@ class ContaViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    @action(methods=['POST'], detail=True, url_path='depositar')
-    def depositar(self, request, pk=None):
-        conta = Conta.objects.filter(id=pk).first()
+    @action(methods=['POST'], detail=False, url_path='depositar')
+    def depositar(self, request):
+        user = self.request.user
+        conta = Conta.objects.filter(cliente=user).first()
         serializer_recebido = serializer.DepositoSerializer(data=request.data)
-        
-        if conta and serializer_recebido.is_valid():
+
+        if serializer_recebido.is_valid() and conta:
             valor_deposito = decimal.Decimal(serializer_recebido.validated_data.get('value'))
             saldo = decimal.Decimal(conta.saldo)
-            
+
             conta.saldo = saldo + valor_deposito
             conta.save()
+
             return Response({"saldo": conta.saldo}, status=status.HTTP_200_OK)
-        
-        return Response({"message": "Conta não encontrada ou dados inválidos"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer_recebido.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 class CartaoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):

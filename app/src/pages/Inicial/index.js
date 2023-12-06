@@ -3,20 +3,30 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import {useAuthStore} from '../../stores/authStore/index';
+
+
 
 export default function Inicial() {
     const navigation = useNavigation();
 
+    const accessToken = useAuthStore(state => state.accessToken);
+
+
     useEffect(() => {
-        axios.get('https://71c2-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://11a9-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
-                    Authorization: "Bearer " + "https://71c2-189-57-188-42.ngrok-free.app"
+                    Authorization: "Bearer " + accessToken
                 }
             }
-        ).then((response) => console.log(response)).catch((e) => {
+        ).then((response) => 
+            console.log(response),
+            console.log(accessToken)
+
+        )
+        .catch((e) => {
             console.log(e.response);
-            console.log(yourJWTToken);
         })
     })
 

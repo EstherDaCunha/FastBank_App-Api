@@ -1,11 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import axios from "axios";
+import {useAuthStore} from '../../stores/authStore/index';
 
 export default function Transf() {
     const navigation = useNavigation();
+
+    const accessToken = useAuthStore(state => state.accessToken);
+
+    const [destino, setDestino] = useState(null)
+    const [origem, setOrigem] = useState(null)
+    const [cartao, setCartao] = useState(null)
+    const [valor, setValor] = useState(null)
+
+    useEffect(() => {
+        axios.get('https://11a9-189-57-188-42.ngrok-free.app/api/token/',
+            {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+                }
+            }
+        ).then((response) => 
+            console.log(accessToken)
+
+        )
+        .catch((e) => {
+            console.log(e.response);
+        })
+
+        
+    })
+
+    async function transf(){
+        if (valor != null && valor != "" && valor != 0){
+
+            await axios.post("https://11a9-189-57-188-42.ngrok-free.app/api/transacao/",{
+                "conta_destino": destino,
+                "conta_origem": origem,
+                "cartao": cartao,
+                "valor": valor
+            }, {
+                headers: {
+                    Authorization: "Bearer " + accessToken
+            }})
+            .then((response)=> {
+                console.log(response.data)
+            })
+    }else{
+        alert('Valor inválido')
+    }}
+
+
+   
 
     return (
         <ScrollView style={styles.container}>
@@ -22,32 +71,40 @@ export default function Transf() {
 
                 <Text style={styles.title}>Para</Text>
                     <TextInput 
-                    placeholder=" Digite o nome"
-                    style={styles.input}
+                    placeholder="Digite o ID da conta destino"
+                    style={styles.input} 
+                    onChangeText={(text) => setDestino(text)}
+                    value={destino}
                     />
 
                     <Text style={styles.title}>Valor</Text>
                     <TextInput 
                     placeholder=" R$ 0,00"
-                    style={styles.input}
+                    style={styles.input} 
+                    onChangeText={(text) => setValor(text)}
+                    value={valor}
                     />
 
                     <Text style={styles.title}>Conta</Text>
                     <TextInput 
-                    placeholder="Numero da conta"
-                    style={styles.input}
+                    placeholder="Digite o ID da conta de origem"
+                    style={styles.input} 
+                    onChangeText={(text) => setOrigem(text)}
+                    value={origem}
                     />
 
-                    <Text style={styles.title}>Banco</Text>
+                    <Text style={styles.title}>Cartão</Text>
                     <TextInput 
-                    placeholder="Banco"
-                    style={styles.input}
+                    placeholder="Cartão"
+                    style={styles.input} 
+                    onChangeText={(text) => setCartao(text)}
+                    value={cartao}
                     />
 
                     <Text style={styles.title}>Taxa de 3,50</Text>
 
 
-                <TouchableOpacity style={styles.prop} onPress={() => navigation.navigate('Inicial')}>
+                <TouchableOpacity style={styles.prop} onPress={transf}>
                     <Text style={styles.txtTitle}>Confirmar</Text>
                 </TouchableOpacity>
             </View>
