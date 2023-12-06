@@ -37,13 +37,14 @@ export default function Deposito() {
         if (valor != null && valor != "" && valor != 0){
 
             await axios.post("https://11a9-189-57-188-42.ngrok-free.app/api/conta/depositar",{
-                "valor": valor
+                "value": valor
             }, {
                 headers: {
                     Authorization: "Bearer " + accessToken
             }})
             .then((response)=> {
                 console.log(response.data)
+                navigation.navigate('Confirmacao')
             })
     }else{
         alert('Valor inválido')
@@ -53,7 +54,7 @@ export default function Deposito() {
         <ScrollView style={styles.container}>
             <View style={styles.container}>
                 <View>
-                    <Text style={styles.txt}>Deosito</Text>
+                    <Text style={styles.txt}>Deposito</Text>
 
                     <Text style={styles.title}>Valor a depositar</Text>
                     <TextInput 
@@ -64,7 +65,7 @@ export default function Deposito() {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.prop} onPress={() => navigation.navigate('Confirmacao')}>
+                <TouchableOpacity style={styles.prop} onPress={dep}>
                     <Text style={styles.txtTitle}>Confirmar</Text>
                 </TouchableOpacity>
             </View>
