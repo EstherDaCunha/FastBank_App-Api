@@ -274,12 +274,28 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
                     status=emprestimo_status
                 )
 
+
                 if emprestimo_status == 'Aprovado':
+                    extrato = Extrato.objects.create(
+                    conta=conta,
+                    valor=valor_emprestimo,
+                    tipo="Emprestimo Aprovado"
+                    )
+
+                    extrato.save()
                     return Response({"message": f"Solicitação de empréstimo {emprestimo_status.lower()} realizada com sucesso"}, status=status.HTTP_201_CREATED)
                 else:
+                    extrato = Extrato.objects.create(
+                    conta=conta,
+                    valor=valor_emprestimo,
+                    tipo="Emprestimo negado"
+                    )
+
+                    extrato.save()
                     return Response({"message": "Solicitação de empréstimo negada"}, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Conta não encontrada"}, status=status.HTTP_404_NOT_FOUND)
+            
         else:
             return Response({"message": "O 'conta_id' e 'valor_emprestimo' são obrigatórios"}, status=status.HTTP_400_BAD_REQUEST)
         
