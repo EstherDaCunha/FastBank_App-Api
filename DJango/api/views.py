@@ -86,6 +86,14 @@ class ContaViewSet(viewsets.ModelViewSet):
             conta.saldo = saldo + valor_deposito
             conta.save()
 
+            extrato = Extrato.objects.create(
+                conta=conta,
+                valor=valor_deposito,
+                tipo="Deposito"
+            )
+
+            extrato.save()
+
             return Response({"saldo": conta.saldo}, status=status.HTTP_200_OK)
 
         return Response(serializer_recebido.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -179,6 +187,14 @@ class TransacaoViewSet(viewsets.ViewSet):
 
                 conta_origem.save()
                 conta_destino.save()
+
+                extrato = Extrato.objects.create(
+                conta=conta_origem,
+                valor=valor,
+                tipo="Transferencia"
+                )
+
+                extrato.save()
 
                 return Response({"message": "Transação realizada com sucesso"}, status=status.HTTP_201_CREATED)
             else:
@@ -333,13 +349,12 @@ class ExtratoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Retrieve conta for authenticated user."""
-        conta = Conta.objects.filter(user=self.request.user).first()
+        conta = Conta.objects.filter(cliente=self.request.user).first()
         queryset = self.queryset
 
         return queryset.filter(
             conta=conta
-        ).order_by('-id').distinct()
+        ).order_by('id').distinct()
     
 
 

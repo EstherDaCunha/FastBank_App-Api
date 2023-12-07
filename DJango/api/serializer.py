@@ -58,5 +58,4 @@ class ExtratoSerializer(serializers.ModelSerializer):
     conta = SerializerConta(read_only=True, many=False)
     class Meta:
         model = Extrato
-        fields = ['id', 'agencia', 'conta', 'saldo']
-        read_only_fields = ['id', 'agencia', 'conta', 'saldo']
+        fields = '__all__'

@@ -11,7 +11,7 @@ urlpatterns = [
     path('cartao/', views.CartaoViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('transacao/', views.TransacaoViewSet.as_view({'post': 'transferencia', 'get':'criar_extrato'})),
     path('emprestimo/', views.EmprestimoViewSet.as_view({'post': 'solicitar_emprestimo', 'get':'list'})),
-    path('extrato/', views.ExtratoViewSet.as_view({'get':'list'})),
+    path('extrato/<int:pk>', views.ExtratoViewSet.as_view({'get':'list'})),
 
 ]
 
