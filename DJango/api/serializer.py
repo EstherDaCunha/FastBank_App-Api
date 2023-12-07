@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import User, Conta, Cartao, Transacao, Emprestimo
+from api.models import User, Conta, Cartao, Transacao, Emprestimo, Extrato
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import timedelta
@@ -53,3 +53,10 @@ class EmprestimoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Emprestimo
         fields = '__all__'
+
+class ExtratoSerializer(serializers.ModelSerializer):
+    conta = SerializerConta(read_only=True, many=False)
+    class Meta:
+        model = Extrato
+        fields = ['id', 'agencia', 'conta', 'saldo']
+        read_only_fields = ['id', 'agencia', 'conta', 'saldo']

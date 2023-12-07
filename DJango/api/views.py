@@ -1,5 +1,5 @@
 from .models import User, Conta
-from .serializer import ClienteSerializer, SerializerConta, SerializerCartao
+from .serializer import ClienteSerializer, SerializerConta, SerializerCartao, ExtratoSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.decorators import action
 from rest_framework_simplejwt import authentication as authenticationJWT
-from api.models import Conta, Cartao, Transacao, Emprestimo
+from api.models import Conta, Cartao, Transacao, Emprestimo, Extrato
 from rest_framework import (viewsets, status)
 from api import serializer
 from django.db.models import Q
@@ -325,5 +325,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             "access": str(access),
         }
         return Response(token_data, status=status.HTTP_200_OK)
+    
+class ExtratoViewSet(viewsets.ModelViewSet):
+    queryset = Extrato.objects.all()
+    serializer_class = serializer.ExtratoSerializer
+    authentication_classes = [authenticationJWT.JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve conta for authenticated user."""
+        conta = Conta.objects.filter(user=self.request.user).first()
+        queryset = self.queryset
+
+        return queryset.filter(
+            conta=conta
+        ).order_by('-id').distinct()
+    
+
 
         
