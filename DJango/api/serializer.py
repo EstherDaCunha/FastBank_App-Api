@@ -1,9 +1,5 @@
 from rest_framework import serializers
 from api.models import User, Conta, Cartao, Transacao, Emprestimo, Extrato
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from datetime import timedelta
-from django.utils import timezone
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:

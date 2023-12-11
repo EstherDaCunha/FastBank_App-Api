@@ -16,7 +16,7 @@ export default function Emprestimo() {
 
 
     useEffect(() => {
-        axios.get('https://11a9-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://0c48-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken

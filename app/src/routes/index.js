@@ -16,6 +16,7 @@ import Confirmacao from '../pages/Deposito/Confirmacao'
 import Emprestimo from '../pages/Emprestimo/Emprestimo'
 import Cadastro from '../pages/Cadastro/Cadastro'
 import ConfirmacaoEmp from '../pages/Emprestimo/ConfirmacaoEmp'
+import Credito from '../pages/Credito/Credito'
 
 const Stack = createStackNavigator()
 
@@ -115,6 +116,12 @@ export default function Routes() {
             <Stack.Screen
                 name="ConfirmacaoEmp"
                 component={ConfirmacaoEmp}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="Credito"
+                component={Credito}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

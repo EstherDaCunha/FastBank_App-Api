@@ -17,7 +17,7 @@ export default function Transf() {
     const [valor, setValor] = useState(null)
 
     useEffect(() => {
-        axios.get('https://11a9-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://2fbe-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken
@@ -37,7 +37,7 @@ export default function Transf() {
     async function transf(){
         if (valor != null && valor != "" && valor != 0){
 
-            await axios.post("https://11a9-189-57-188-42.ngrok-free.app/api/transacao/",{
+            await axios.post("https://0c48-189-57-188-42.ngrok-free.app/api/transacao/",{
                 "conta_destino": destino,
                 "conta_origem": origem,
                 "cartao": cartao,

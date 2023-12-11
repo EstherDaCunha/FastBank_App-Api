@@ -14,7 +14,7 @@ export default function Inicial() {
 
 
     useEffect(() => {
-        axios.get('https://11a9-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://0c48-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken
@@ -79,13 +79,13 @@ export default function Inicial() {
                     />
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity style={styles.prop} onPress={() => navigation.navigate('Credito')}>
+                <Text style={styles.txtTitle}>Solicite seu cartão de crédito</Text>
+                <Text style={styles.txtDesc}>Descubra a liberdade financeira com nosso novo cartão de crédito, oferecendo benefícios exclusivos e taxas competitivas.</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.prop}>
                 <Text style={styles.txtTitle}>Investimento</Text>
                 <Text style={styles.txtDesc}>Invista de maneira simples, rápida,  sem burocracias e 100% digital.</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.prop}>
-                <Text style={styles.txtTitle}>Seguro de vida</Text>
-                <Text style={styles.txtDesc}>Conheça Trust Bank Vida: Um seguro simples e que cabe no seu bolso.</Text>
             </TouchableOpacity>
         </View>
     );
@@ -122,14 +122,14 @@ const styles = StyleSheet.create({
     prop: {
         backgroundColor: '#5F2DA8',
         width: '95%',
-        height: 120,
+        height: 140,
         margin: 12,
         borderRadius: 20,
         marginTop: 25
     },
 
     txtTitle: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: 'bold',
         color: 'white',
         marginLeft: 10,

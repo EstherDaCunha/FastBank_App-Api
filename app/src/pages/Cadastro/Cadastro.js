@@ -19,17 +19,17 @@ export default function Transf() {
             "password": password
         }
         console.log(teste)
-        
-        await fetch("https://11a9-189-57-188-42.ngrok-free.app/api/usuarios/", {
+
+        await fetch("https://0c48-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(teste),
         })
-        .then((response) => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error(error.response))
+            .then((response) => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error.response))
     }
 
     const camera = async () => {
@@ -55,15 +55,12 @@ export default function Transf() {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.container}>
-                
-                <Animatable.Image
-                    animation="flipInY"
+                <TouchableOpacity 
                     source={require('../../assets/camera.png')}
-                    style={{ width: '60%', marginLeft:'20%' }}
-                    resizeMode="contain"
+                    style={{ width: '60%', marginLeft: '20%' }}
                     onPress={camera}
                 />
-
+                    
                 <Text style={styles.title}>Nome Completo</Text>
                 <TextInput
                     placeholder=" Digite o nome"
@@ -139,6 +136,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'white',
         marginLeft: 85,
+        marginTop:'20%'
     },
     input: {
         borderBottomWidth: 1,
@@ -149,5 +147,6 @@ const styles = StyleSheet.create({
         width: '60%',
         marginLeft: 85,
         borderRadius: 10,
+        marginTop:'20%'
     },
 })
