@@ -43,7 +43,7 @@ class ClentesDetailView(RetrieveAPIView):
     serializer_class = ClienteSerializer
 
 class ContaViewSet(viewsets.ModelViewSet):    
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated)
     serializer_class = SerializerConta
     authentication_classes = [authenticationJWT.JWTAuthentication]
 
@@ -101,14 +101,15 @@ class ContaViewSet(viewsets.ModelViewSet):
     
 class CartaoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Cartao.objects.all()
-    serializer_class = serializer.SerializerCartao
+    serializer_class = SerializerCartao
     authentication_classes = [authenticationJWT.JWTAuthentication]
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         """Pegar contas para usuários autenticados"""
         queryset = self.queryset
-        return queryset.filter(conta=(Conta.objects.all().filter(user=self.request.user).order_by("created_at").first())).order_by("created_at").distinct()
+        print(Conta.objects.filter(cliente=self.request.user))
+        return queryset.filter(conta=(Conta.objects.filter(cliente=self.request.user).order_by("created_at").first())).order_by("created_at").distinct()
     
 
     @action(detail=False, methods=["POST"], url_path='solicitar')
@@ -119,7 +120,8 @@ class CartaoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gen
             conta = Conta.objects.filter(cliente=auth_user).first()
 
             if conta:
-                cartao_solicitado = Cartao.objects.filter
+                # cartao_solicitado = Cartao.objects.filter()
+                pass
 
         
 class TransacaoViewSet(viewsets.ViewSet):

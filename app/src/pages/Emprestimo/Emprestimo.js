@@ -16,7 +16,7 @@ export default function Emprestimo() {
 
 
     useEffect(() => {
-        axios.get('https://0c48-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://26cb-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken
@@ -36,17 +36,17 @@ export default function Emprestimo() {
     async function emp() {
         if (valor_emprest != null && valor_emprest != "" && valor_emprest != 0) {
 
-            await axios.post("https://11a9-189-57-188-42.ngrok-free.app/api/emprestimo/", {
+            await axios.post("https://26cb-189-57-188-42.ngrok-free.app/api/emprestimo/", {
                 "valor_emprest": valor_emprest,
                 "conta": conta
             }, {
                 headers: {
-                    Authorization: "Bearer " + accessToken
+                    Authorization: "Bearer " + "https://26cb-189-57-188-42.ngrok-free.app"
                 }
             })
                 .then((response) => {
                     console.log(response.data)
-                    navigation.navigate('ConfirmacaoEmp', { message: response.data })
+                    navigation.navigate('Confirmacao', { message: response})
                 })
         } else {
             alert('Valor inválido')
@@ -57,7 +57,7 @@ export default function Emprestimo() {
         <ScrollView style={styles.container}>
             <View style={styles.container}>
                 <View>
-                    <Text style={styles.txt}>Transferência</Text>
+                    <Text style={styles.txt}>Emprestimo</Text>
 
                     <Image
                         source={require('../../assets/cartao.png')}

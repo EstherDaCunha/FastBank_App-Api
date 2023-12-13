@@ -8,7 +8,6 @@ import { useRoute } from "@react-navigation/native";
 export default function ConfirmacaoEmp() {
     const route = useRoute();
 
-    const message = route.params?.message
     const navigation = useNavigation();
 
     console.log(message)

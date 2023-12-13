@@ -17,7 +17,7 @@ import Emprestimo from '../pages/Emprestimo/Emprestimo'
 import Cadastro from '../pages/Cadastro/Cadastro'
 import ConfirmacaoEmp from '../pages/Emprestimo/ConfirmacaoEmp'
 import Credito from '../pages/Credito/Credito'
-
+import Extrato from '../pages/Extrato/Extrato'
 const Stack = createStackNavigator()
 
 export default function Routes() {
@@ -124,6 +124,13 @@ export default function Routes() {
                 component={Credito}
                 options={{ headerShown: false }}
             />
+
+            <Stack.Screen
+                name="Extrato"
+                component={Extrato}
+                options={{ headerShown: false }}
+            />
+        
         </Stack.Navigator>
 
     )

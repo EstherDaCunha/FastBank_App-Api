@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import * as ImagePicker from 'expo-image-picker';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {useAuthStore} from '../../stores/authStore/index';
@@ -16,7 +15,7 @@ export default function Deposito() {
     const [valor, setValor] = useState(null)
 
     useEffect(() => {
-        axios.get('https://0c48-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://26cb-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken
@@ -36,7 +35,7 @@ export default function Deposito() {
     async function dep(){
         if (valor != null && valor != "" && valor != 0){
 
-            await axios.post("https://11a9-189-57-188-42.ngrok-free.app/api/conta/depositar",{
+            await axios.post("https://26cb-189-57-188-42.ngrok-free.app/api/conta/depositar",{
                 "value": valor
             }, {
                 headers: {

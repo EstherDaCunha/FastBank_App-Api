@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
-import * as Animatable from 'react-native-animatable';
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -20,7 +19,7 @@ export default function Transf() {
         }
         console.log(teste)
 
-        await fetch("https://0c48-189-57-188-42.ngrok-free.app/api/usuarios/", {
+        await fetch("https://26cb-189-57-188-42.ngrok-free.app/api/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -54,13 +53,7 @@ export default function Transf() {
 
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.container}>
-                <TouchableOpacity 
-                    source={require('../../assets/camera.png')}
-                    style={{ width: '60%', marginLeft: '20%' }}
-                    onPress={camera}
-                />
-                    
+            <View style={styles.container}>    
                 <Text style={styles.title}>Nome Completo</Text>
                 <TextInput
                     placeholder=" Digite o nome"
@@ -120,7 +113,7 @@ const styles = StyleSheet.create({
         height: 50,
         marginLeft: 40,
         borderRadius: 20,
-        marginTop: 50,
+        marginTop: 40,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -136,7 +129,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'white',
         marginLeft: 85,
-        marginTop:'20%'
+        marginTop:'10%'
     },
     input: {
         borderBottomWidth: 1,
@@ -147,6 +140,7 @@ const styles = StyleSheet.create({
         width: '60%',
         marginLeft: 85,
         borderRadius: 10,
-        marginTop:'20%'
+        marginTop:'10%'
     },
+    
 })

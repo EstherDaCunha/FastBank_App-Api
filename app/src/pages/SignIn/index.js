@@ -20,7 +20,7 @@ export default function SignIn() {
     async function log() {
 
         try {
-            const response = await axios.post('https://0c48-189-57-188-42.ngrok-free.app/api/autenticacao/', {
+            const response = await axios.post('https://26cb-189-57-188-42.ngrok-free.app/api/autenticacao/', {
                 "email": email,
                 "password": password
             })

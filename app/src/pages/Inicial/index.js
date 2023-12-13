@@ -14,7 +14,7 @@ export default function Inicial() {
 
 
     useEffect(() => {
-        axios.get('https://0c48-189-57-188-42.ngrok-free.app/api/token/',
+        axios.get('https://26cb-189-57-188-42.ngrok-free.app/api/token/',
             {
                 headers: {
                     Authorization: "Bearer " + accessToken
@@ -84,8 +84,8 @@ export default function Inicial() {
                 <Text style={styles.txtDesc}>Descubra a liberdade financeira com nosso novo cartão de crédito, oferecendo benefícios exclusivos e taxas competitivas.</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.prop}>
-                <Text style={styles.txtTitle}>Investimento</Text>
-                <Text style={styles.txtDesc}>Invista de maneira simples, rápida,  sem burocracias e 100% digital.</Text>
+                <Text style={styles.txtTitle}>Extrato</Text>
+                <Text style={styles.txtDesc} onPress={() => navigation.navigate('Extrato')}>Acesse o seu histórico de movimentações</Text>
             </TouchableOpacity>
         </View>
     );
